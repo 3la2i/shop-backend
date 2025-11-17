@@ -10,14 +10,13 @@ const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
 connectDB();
 
-
 // Middlewares
 app.use(cors());
 app.use(express.json());
 
 // Auth routes (unprotected)
-
 app.use('/api/auth', require('./Routes/auth'));
+
 // Client routes (protected)
 app.use(authMiddleware)
 
