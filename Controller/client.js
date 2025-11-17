@@ -181,7 +181,7 @@ const createPurchaseForClient = async (req, res) => {
 
         // Validate input
         if (!items || !Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: 'Items are required and must be an array' });
+            return res.status(400).json({ message: 'Items are required and must be an rray' });
         }
 
         if (!totalAmount || totalAmount <= 0) {
