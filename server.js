@@ -12,8 +12,18 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middlewares
+const allowedOrigins = (process.env.FRONT_API_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.VITE_API_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, origin || allowedOrigins[0]);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json());
