@@ -19,6 +19,7 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET ,
       { expiresIn: '7d' }
     );
+    console.log({tokeeen: token})
     return res.json({ message: 'Login successful', token });
   } catch (err) {
     return res.status(500).json({ message: 'Server error' });
