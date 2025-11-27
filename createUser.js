@@ -7,8 +7,8 @@ dotenv.config();
 
 async function createUser() {
   await connectDB();
-  const username = 'admin';
-  const password = 'admin123';
+  const username = '';
+  const password = '';
   const exists = await User.findOne({ username });
   if (exists) {
     console.log('User already exists');
@@ -21,3 +21,15 @@ async function createUser() {
 }
 
 createUser(); 
+
+
+
+
+async function updateUser() {
+  await connectDB();
+  const user = await User.findOne({ username: 'admin' });
+  user.password = 'admin123';
+  await user.save();
+  console.log('User updated:', user);
+  process.exit(0);
+}
