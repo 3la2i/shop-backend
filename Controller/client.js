@@ -5,10 +5,19 @@ require('../Models/Product');
 // Get all clients
 const getAllClients = async (req, res) => {
     try {
-        const clients = await Customer.find().sort({ createdAt: -1 });
+        const clients = await Customer.find({isActive: true}).sort({ createdAt: -1 }); //only active clients
         res.json(clients);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching clients', error: error.message });
+    }
+};
+// Get all inactive clients
+const getAllInactiveClients = async (req, res) => {
+    try {
+        const clients = await Customer.find({isActive: false}).sort({ createdAt: -1 }); //only inactive clients
+        res.json(clients);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching inactive clients', error: error.message });
     }
 };
 
@@ -40,6 +49,8 @@ const createClient = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error creating client', error: error.message });
     }
+    console.log('Client created:', newClient);
+
 };
 
 // Update client
@@ -251,5 +262,6 @@ module.exports = {
     deleteClient,
     getClientDetails,
     addPaymentToPurchase,
-    createPurchaseForClient
+    createPurchaseForClient,
+    getAllInactiveClients
 };

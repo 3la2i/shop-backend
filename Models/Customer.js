@@ -5,6 +5,7 @@ const customerSchema = new mongoose.Schema({
   phone: String,
   address: String,
   notes: String,
+  isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Customer', customerSchema);

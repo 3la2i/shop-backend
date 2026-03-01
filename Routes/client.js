@@ -8,7 +8,9 @@ const {
     deleteClient, 
     getClientDetails,
     addPaymentToPurchase,
-    createPurchaseForClient
+    createPurchaseForClient,
+    getAllInactiveClients
+
 } = require('../Controller/client');
 
 // Get all clients
@@ -34,5 +36,8 @@ router.post('/:id/payments', addPaymentToPurchase);
 
 // Create purchase for client
 router.post('/:id/purchases', createPurchaseForClient);
+
+// Get all inactive clients
+router.get('/inactive', getAllInactiveClients);
 
 module.exports = router;
