@@ -12,7 +12,8 @@ connectDB();
 
 // Middlewares
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://shop-frontend-orcin.vercel.app'],
+  origin: ['http://localhost:5173', 'https://shop-frontend-orcin.vercel.app', 'https://watersupplements.netlify.app'],
+
   credentials: true
 }));
 
