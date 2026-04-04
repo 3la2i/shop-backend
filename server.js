@@ -7,38 +7,15 @@ const authMiddleware = require('./middleware');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const defaultAllowedOrigins = [
-  'http://localhost:5173',
-  'https://shop-frontend-orcin.vercel.app',
-  'https://watersupplements.netlify.app',
-];
-const envOrigins = (process.env.ALLOWED_ORIGINS || '')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
-const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...envOrigins])];
-
-const corsOptions = {
-  origin(origin, callback) {
-    if (!origin) {
-      return callback(null, true);
-    }
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(null, false);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  optionsSuccessStatus: 204,
-};
-
 // Connect to MongoDB
 connectDB();
 
 // Middlewares
-app.use(cors(corsOptions));
+app.use(cors({
+  origin: ['http://localhost:5173/', 'https://shop-frontend-orcin.vercel.app/', 'https://watersupplements.netlify.app/'],
+
+  credentials: true
+}));
 
 app.use(express.json());
 
@@ -58,6 +35,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT, () => {  
+  console.log(`Server is running on http://localhost:${PORT}` );
+});     
