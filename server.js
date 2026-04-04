@@ -21,11 +21,11 @@ app.use(express.json());
 
 // Auth routes (unprotected)
 app.use('/api/auth', require('./Routes/auth'));
-
+app.use('/api/client', require('./Routes/client'));
 // Protected routes
 app.use(authMiddleware);
 
-app.use('/api/client', require('./Routes/client'));
+
 app.use('/api/product', require('./Routes/product'));
 app.use('/api/purchase', require('./Routes/purchase'));
 
@@ -35,6 +35,6 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {  
-  console.log(`Server is running on http://localhost:${PORT}` );
-});     
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});   
