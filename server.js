@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 
 const defaultAllowedOrigins = [
   'http://localhost:5173',
-  'https://shop-frontend-orcin.vercel.app',
+  'https://shop-frontend-3la2is-projects.vercel.app/login',
   'https://watersupplements.netlify.app',
 ];
 const envOrigins = (process.env.ALLOWED_ORIGINS || '')
