@@ -1,15 +1,34 @@
 const Purchase = require('../Models/Purchase');
 const Customer = require('../Models/Customer');
 
-// List purchases with optional filters
-// Query params: startDate, endDate, status (paid|partial|unpaid), customerId
+/**
+ * List purchases with optional filters
+ * Query params: startDate, endDate, status (paid|partial|unpaid), customerId
+ * Only returns purchases of customers belonging to this user
+ */
 const listPurchases = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { startDate, endDate, status, customerId } = req.query;
 
-    const filter = {};
+    // Find all customers that belong to this user (userId stored in Customer schema)
+    const customerQuery = { userId: userId };
+    if (customerId) customerQuery._id = customerId;
+
+    const userCustomers = await Customer.find(customerQuery).select('_id');
+    const customerIds = userCustomers.map(c => c._id);
+
+    // If a customerId is specified but doesn't belong to the user, result should be empty
+    if (customerId && customerIds.length === 0) {
+      return res.json([]);
+    }
+
+    // Build purchase filter
+    const filter = {
+      customerId: { $in: customerIds }
+    };
+
     if (status) filter.paymentStatus = status;
-    if (customerId) filter.customerId = customerId;
 
     if (startDate || endDate) {
       filter.date = {};
@@ -28,13 +47,23 @@ const listPurchases = async (req, res) => {
   }
 };
 
-// Aggregate summary for inventory
-// Returns totals by day and overall
+/**
+ * Aggregate summary for inventory
+ * Returns totals by day and overall
+ * Only summarizes purchases for this user's customers
+ */
 const summarizePurchases = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { startDate, endDate } = req.query;
 
-    const match = {};
+    // Get all this user's customers' IDs
+    const userCustomers = await Customer.find({ userId: userId }).select('_id');
+    const customerIds = userCustomers.map(c => c._id);
+
+    const match = {
+      customerId: { $in: customerIds }
+    };
     if (startDate || endDate) {
       match.date = {};
       if (startDate) match.date.$gte = new Date(startDate);
@@ -77,5 +106,4 @@ module.exports = {
   listPurchases,
   summarizePurchases
 };
-
 

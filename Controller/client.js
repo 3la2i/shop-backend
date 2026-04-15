@@ -5,7 +5,8 @@ require('../Models/Product');
 // Get all clients
 const getAllClients = async (req, res) => {
     try {
-        const clients = await Customer.find({isActive: true}).sort({ createdAt: -1 }); //only active clients
+        const userId = req.user.id;
+        const clients = await Customer.find({userId: userId, isActive: true}).sort({ createdAt: -1 }); //only active clients
         res.json(clients);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching clients', error: error.message });
@@ -14,7 +15,8 @@ const getAllClients = async (req, res) => {
 // Get all inactive clients
 const getAllInactiveClients = async (req, res) => {
     try {
-        const clients = await Customer.find({isActive: false}).sort({ createdAt: -1 }); //only inactive clients
+        const userId = req.user.id;
+        const clients = await Customer.find({userId: userId, isActive: false}).sort({ createdAt: -1 }); //only inactive clients
         res.json(clients);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching inactive clients', error: error.message });
@@ -24,7 +26,8 @@ const getAllInactiveClients = async (req, res) => {
 // Get single client by ID
 const getClientById = async (req, res) => {
     try {
-        const client = await Customer.findById(req.params.id);
+        const userId = req.user.id;
+        const client = await Customer.findById(req.params.id, {userId: userId});
         if (!client) {
             return res.status(404).json({ message: 'Client not found' });
         }
@@ -37,8 +40,10 @@ const getClientById = async (req, res) => {
 // Create new client
 const createClient = async (req, res) => {
     try {
+        const userId = req.user.id;
         const { name, phone, address, notes } = req.body;
         const newClient = new Customer({
+            userId,
             name,
             phone,
             address,
@@ -56,10 +61,11 @@ const createClient = async (req, res) => {
 // Update client
 const updateClient = async (req, res) => {
     try {
+        const userId = req.user.id;
         const { name, phone, address, notes } = req.body;
         const updatedClient = await Customer.findByIdAndUpdate(
             req.params.id,
-            { name, phone, address, notes },
+            { userId, name, phone, address, notes },
             { new: true }
         );
         if (!updatedClient) {
@@ -74,7 +80,8 @@ const updateClient = async (req, res) => {
 // Delete client
 const deleteClient = async (req, res) => {
     try {
-        const deletedClient = await Customer.findByIdAndDelete(req.params.id);
+        const userId = req.user.id;
+        const deletedClient = await Customer.findByIdAndDelete(req.params.id, {userId: userId});
         if (!deletedClient) {
             return res.status(404).json({ message: 'Client not found' });
         }
@@ -90,11 +97,12 @@ const Payment = require('../Models/Payment').default || require('../Models/Payme
 
 const getClientDetails = async (req, res) => {
     try {
+        const userId = req.user.id;
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
             console.error('Invalid client ID:', req.params.id);
             return res.status(400).json({ message: 'Invalid client ID' });
         }
-        const client = await Customer.findById(req.params.id);
+        const client = await Customer.findById(req.params.id, {userId: userId});
         if (!client) {
             console.error('Client not found for ID:', req.params.id);
             return res.status(404).json({ message: 'Client not found' });
